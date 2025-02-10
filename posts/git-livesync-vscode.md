@@ -42,23 +42,21 @@ Since I didn't have any experience with Typescript or the [VS Code API](https://
 
 I quickly followed the VS Code extension tutorial, which basically taught me jack shit except the file structure of VS Code extensions. (No hate to the authors, though. The people at VS Code write damn good tutorials; I learned a lot from their Django one)
 
-Regardless, I started the project by using the yeoman generator for vs code extensions with:
+Regardless, I started the project by using the [yeoman generator for vs code extensions](https://www.npmjs.com/package/generator-code) with:
 
 ```bash
 yo code .
 ```
 
-_Take note you need to have NVM and NPM set up on your local machine._
+_Take note you need to have [NVM and NPM](https://nodejs.org/en/download) set up on your local machine._
 
 This set up my local development environment with the proper project structure. I'm lazy and didn't bother with writing unit tests for this project, so the only files we are concerned with are `package.json` and `src/extension.ts`.
 
-`package.json` is a node thing that defines a lot of information about the project, and VS Code extends this by including extension metadata for the marketplace and the extension view, as well as using it to add Activation Events and configuration settings.
+`package.json` is a node thing that defines a lot of information about the project, and VS Code extends this by including extension metadata for the marketplace and the extension view, as well as using it to add [Activation Events](https://code.visualstudio.com/api/references/activation-events) and [configuration settings](https://code.visualstudio.com/api/references/contribution-points#contributes.configuration).
 
 `src/` is gonna contain all our typescript files that define the extension's logic, and `extension.ts` is compiled to `out/extension.js`, which is the entrypoint defined in our `package.json` for the extension.
 
-I started this project to try and gain some familiarity with the VS Code API and Typescript by writing a simple file watcher that monitors for any change and immediately commits and syncs when the file changed is not excluded in the `.gitignore` or the `.git/` directory.
-
-_As an aside, I have recently adopted the Conventional Commit syntax for my commits, hoping that this will improve both readability of my repos and also force me to think more carefully about what I commit. This first task of this project however, was totally not in sync with this philosophy; I just wrote the entire intended logic of the extension, tested it, and pushed it. Later commits are better separated._
+_As an aside, I have recently adopted the [Conventional Commit](https://www.conventionalcommits.org/) syntax for my commits, hoping that this will improve both readability of my repos and also force me to think more carefully about what I commit. This first task of this project however, was totally not in sync with this philosophy; I just wrote the entire intended logic of the extension, tested it, and pushed it. Later commits are better separated._
 
 We use the VS Code API to watch the filesystem for changes, and this does not change throughout the project.
 
@@ -81,7 +79,7 @@ watcher.onDidDelete((e) => {
 context.subscriptions.push(watcher);
 ```
 
-For now, I ran a simple terminal window that runs my git commands, though I will be changing this later to use simple-git.
+For now, I ran a simple terminal window that runs my git commands, though I will be changing this later to use [simple-git](https://www.npmjs.com/package/simple-git).
 
 ```typescript
 const handleFileEvent = (event: vscode.Uri, action: string) => {
@@ -241,7 +239,7 @@ This initial attempt at a debounce mechanism was not great. The keen eyed among 
 
 ## simple-gitting
 
-I obviously wasn't very happy about this implementation, because the next four hours and five commits (minus documentation or chores) were all about trying to fix this. I'm not used to working with node, and generally try and implement everything from the ground up like an idiot low level programmer, so I had no idea about node's wonderful library of packages that can do everything I wanted better and faster. Introducing simple-git! Instead of me trying to run git commands in the VS Code terminal or using node's child process exec, simple-git lets me literally just call git.pull() and everything works automagically.
+I obviously wasn't very happy about this implementation, because the next four hours and five commits (minus documentation or chores) were all about trying to fix this. I'm not used to working with node, and generally try and implement everything from the ground up like an idiot low level programmer, so I had no idea about node's wonderful library of packages that can do everything I wanted better and faster. Introducing [simple-git](https://www.conventionalcommits.org/)! Instead of me trying to run git commands in the VS Code terminal or using node's child process exec, simple-git lets me literally just call git.pull() and everything works automagically.
 
 Anyway, here's what the refactor looked like in `gitHandler.ts`:
 
@@ -341,7 +339,7 @@ output*.*
 
 It is messy because I just appended exclude patterns to whatever the yeoman generator gave me to start with.
 
-Along with this, I also (following the tutorial) bundled my extension, which reduced the size of the packaged VSIX file from 10.9MB to 43.63KB (a 2498% size reduction!).
+Along with this, I also (following the [tutorial](https://code.visualstudio.com/api/working-with-extensions/bundling-extension)) bundled my extension, which reduced the size of the packaged VSIX file from 10.9MB to 43.63KB (a 2498% size reduction!).
 
 Excited and quivering at finally being able to release a finished piece of software for the first time, I wrote a CI pipeline with Github Actions (which promptly [failed](https://github.com/bwfiq/git-livesync/actions/runs/13183413038/job/36799643138)) and tagged my latest commit with v0.0.1.
 
